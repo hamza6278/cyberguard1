@@ -2,11 +2,14 @@
 
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import 'react-toastify/dist/ReactToastify.css';
+
 
 
 
 import './TechnicianDashboard.css';
 import './SoftwareTestingPage.css';
+import { ToastContainer, toast } from 'react-toastify';
 
 function SoftwareTestingPage() {
     const [formData, setFormData] = useState({
@@ -26,17 +29,22 @@ function SoftwareTestingPage() {
   
     const handleSubmit = (e) => {
       e.preventDefault();
+      toast.success("Data Submitted", {
+        position: toast.POSITION.TOP_CENTER,color:"black"
+        
+      });
       console.log('Form Data:', formData);
       // You can handle the submission of this form data here, e.g., send it to your server.
     };
   
     return (
       <div className="center-container">
+        <ToastContainer />
         <div className="form-container">
-          <h2>Software Entry</h2>
+          {/*<h2>Software Entry</h2>*/}
           <form onSubmit={handleSubmit}>
             <div className="form-group">
-              <label>Date:</label>
+              <label>Upload Date:</label>
               <input
                 type="text"
                 name="date"
@@ -45,7 +53,7 @@ function SoftwareTestingPage() {
               />
             </div>
             <div className="form-group">
-              <label>Contact:</label>
+              <label>Contact numb:</label>
               <input
                 type="text"
                 name="contact"

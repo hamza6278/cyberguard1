@@ -4,6 +4,8 @@ import axios from 'axios';
 
 function FolderSelector() {
   const [fileData, setFileData] = useState([]);
+  const [selectedFile, setSelectedFile] = useState(null);
+
 
   const handleFileRead = async (file) => {
     const reader = new FileReader();
@@ -11,9 +13,14 @@ function FolderSelector() {
     reader.onload = async (event) => {
       const buffer = event.target.result;
       const wordArray = arrayBufferToWordArray(buffer);
-      const hash = CryptoJS.SHA256(wordArray).toString(); // Using WordArray and getting the hash
+      const hash = CryptoJS.SHA256(wordArray).toString();
+      const directoryPath = file.webkitRelativePath.substring(
+        0,
+        file.webkitRelativePath.lastIndexOf('/')
+      );
 
-      const apiKey = '57ac47c11a2b67b569acd599267de97e6af541327c588f16ffc495c11d02585f';
+
+      const apiKey = '57ac47c11a2b67b569acd599267de97e6af541327c588f16ffc495c11d02585f'; // Replace with your API key
       const options = {
         method: 'GET',
         url: `https://www.virustotal.com/api/v3/files/${hash}`,
@@ -25,14 +32,31 @@ function FolderSelector() {
 
       try {
         const response = await axios.request(options);
-        const virusTotalResponse = response.data; // Use this response as needed
+        const virusTotalResponse = response.data;
 
         setFileData((prevData) => [
           ...prevData,
-          { fileName: file.name, directory: file.webkitRelativePath, hash, result: virusTotalResponse },
+          {
+            fileName: file.name,
+            directory: directoryPath,
+            hash,
+            result: virusTotalResponse,
+          },
         ]);
       } catch (error) {
-        console.error('Error fetching data from VirusTotal:', error);
+        if (error.response && error.response.status === 404) {
+          setFileData((prevData) => [
+            ...prevData,
+            {
+              fileName: file.name,
+              directory: file.webkitRelativePath,
+              hash,
+              result: { status: 404 },
+            },
+          ]);
+        } else {
+          console.error('Error fetching data from VirusTotal:', error);
+        }
       }
     };
 
@@ -49,13 +73,33 @@ function FolderSelector() {
     return CryptoJS.lib.WordArray.create(words, uint8Array.length);
   };
 
+  const determineFileStatus = (lastAnalysisResults) => {
+    const detectedEngines = Object.entries(lastAnalysisResults)
+      .filter(([_, result]) => result.category === 'malicious')
+      .map(([engine]) => engine);
+
+    if (detectedEngines.length > 0) {
+      return {
+        status: 'Malware',
+        detectedEngines: detectedEngines.join(', '), // List of detected engines
+      };
+    } else {
+      return { status: 'Not a Malware' };
+    }
+  };
+
+  
+
   const onDrop = (fileList) => {
-    const filesArray = Array.from(fileList); // Convert FileList object to an array
+    const filesArray = Array.from(fileList);
 
     filesArray.forEach((file) => {
       handleFileRead(file);
     });
   };
+
+ 
+  
 
   return (
     <div>
@@ -69,7 +113,8 @@ function FolderSelector() {
             <th style={{ border: '1px solid black', padding: '8px' }}>File Name</th>
             <th style={{ border: '1px solid black', padding: '8px' }}>Directory</th>
             <th style={{ border: '1px solid black', padding: '8px' }}>File Hash</th>
-            <th style={{ border: '1px solid black', padding: '8px' }}>Result from VirusTotal API</th>
+            <th style={{ border: '1px solid black', padding: '8px' }}>Last Analysis Results</th>
+            <th style={{ border: '1px solid black', padding: '8px' }}>Status</th>
           </tr>
         </thead>
         <tbody>
@@ -78,7 +123,43 @@ function FolderSelector() {
               <td style={{ border: '1px solid black', padding: '8px' }}>{file.fileName}</td>
               <td style={{ border: '1px solid black', padding: '8px' }}>{file.directory}</td>
               <td style={{ border: '1px solid black', padding: '8px' }}>{file.hash}</td>
-              <td style={{ border: '1px solid black', padding: '8px' }}>{JSON.stringify(file.result)}</td>
+              <td style={{ border: '1px solid black', padding: '8px' }}>
+                {file.result && file.result.data && file.result.data.attributes &&
+                  file.result.data.attributes.last_analysis_results ? (
+                    <ul>
+                      {Object.entries(file.result.data.attributes.last_analysis_results).map(([engine, result]) => (
+                        <li key={engine}>
+                          {`${engine}: ${result.result ? result.result : 'Undetected'}`}
+                        </li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <p>No analysis result available</p>
+                  )}
+              </td>
+              <td style={{ border: '1px solid black', padding: '8px' }}>
+                {file.result && file.result.status === 404 ? (
+                  <span>Not found</span>
+                ) : (
+                  <div>
+                    {determineFileStatus(
+                      file.result.data.attributes.last_analysis_results
+                    ).status}
+                    {determineFileStatus(
+                      file.result.data.attributes.last_analysis_results
+                    ).detectedEngines && (
+                      <p>
+                        Detected by:{' '}
+                        {
+                          determineFileStatus(
+                            file.result.data.attributes.last_analysis_results
+                          ).detectedEngines
+                        }
+                      </p>
+                    )}
+                  </div>
+                )}
+              </td>
             </tr>
           ))}
         </tbody>

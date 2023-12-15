@@ -15,16 +15,39 @@
   
   
   .sidebar {
-    width: 17%; /* Adjust the width as needed */
+     /* Adjust the width as needed */
     background-color: #333435;
-    color: white;
-    padding: 13px;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
+    color: #ffffff;
+    /* padding: 13px; */
+  
+    display: grid;
+    justify-content: center;
+    /* flex-direction: column; */
+    /* align-items: center; */
     height: 35em;
     
   }
+  /* width */
+::-webkit-scrollbar {
+  background: #333435;
+  width: 12px; /* You can adjust this value to change the width of the scrollbar */
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: #333435; /* Color of the track */
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #333435; /* Color of the scrollbar handle */
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #333435; /* Color of the scrollbar handle on hover */
+}
+
   
   .sidebar h3 {
     font-size: 18px;
@@ -90,11 +113,11 @@ button:hover {
 
 .form-container {
   display: flex;
-  flex-direction: column;
+  /* flex-direction: column; */
   align-items: center;
   justify-content: center;
   height: 100vh;
-  border: 1px solid #ccc;
+  /* border: 1px solid #ccc; */
   padding: 20px;
   border-radius: 8px;
 }

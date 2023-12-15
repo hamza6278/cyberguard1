@@ -1,5 +1,5 @@
 const express = require('express');
-const mysql = require('mysql');
+const mysql = require('mysql2'); // Change to mysql2
 const cors = require('cors');
 
 const app = express();
@@ -23,11 +23,11 @@ db.connect((err) => {
 
 app.post('/login', (req, res) => {
   const { full_name, password } = req.body;
-  const query = `SELECT * FROM tech_info WHERE full_name = '${full_name}' AND password = '${password}'`;
+  const query = `SELECT * FROM userdetails WHERE full_name = '${full_name}' AND password = '${password}'`;
   console.log('Query:', query); // Log the query
 
   db.query(
-    'SELECT * FROM tech_info WHERE full_name = ? AND password = ?',
+    'SELECT * FROM userdetails WHERE full_name = ? AND password = ?',
     [full_name, password],
     (err, results) => {
       if (err) {
@@ -45,7 +45,7 @@ app.post('/login', (req, res) => {
   );
 });
 
-const PORT = 3002;
+const PORT = 3004;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });

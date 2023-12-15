@@ -1,10 +1,9 @@
-// DuplicatePage.js
-
-
 import React, { useState } from 'react';
 
 function DuplicatePage() {
-  const [file, setFile] = useState(null);
+  //const [file, setFile] = useState(null);
+  const [enteredHash, setEnteredHash] = useState('');
+  const [result, setResult] = useState('');
 
   const knownHashCodes = [
     'hashcode1',
@@ -13,34 +12,15 @@ function DuplicatePage() {
     // Add more known hash codes here
   ];
 
-  const handleFileChange = (e) => {
-    const selectedFile = e.target.files[0];
-    setFile(selectedFile);
-  };
+  
 
-  const generateHashCode = (data) => {
-    // A simplified hash function (not recommended for production)
-    const hashCode = data.slice(0, 8); // Example: Use the first 8 characters as a hash
-    return hashCode;
-  };
+  
 
-  const handleUpload = () => {
-    if (file) {
-      // Simulate generating a hash code (use a more secure hash function in practice)
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        const data = e.target.result;
-        const uploadedHashCode = generateHashCode(data);
-
-        if (knownHashCodes.includes(uploadedHashCode)) {
-          alert('Software is already tested.');
-        } else {
-          alert('Please enter software testing credentials.');
-        }
-      };
-      reader.readAsBinaryString(file);
+  const handleHashCheck = () => {
+    if (knownHashCodes.includes(enteredHash)) {
+      setResult('Hash code matches a known software.');
     } else {
-      alert('Please select a file to upload.');
+      setResult('Hash code does not match any known software.');
     }
   };
 
@@ -49,11 +29,11 @@ function DuplicatePage() {
       display: 'flex',
       flexDirection: 'column',
       alignItems: 'center',
-      justifyContent: 'flex-start',  // Align content at the top
+      justifyContent: 'flex-start', // Align content at the top
       height: '100vh',
     }}>
       <h2>Software Duplication Check</h2>
-      <h3>Please enter your specified Software file for Duplicacy</h3>
+      <h3>Please enter your specified Software hash for Duplicacy</h3>
       <div style={{
         border: '2px solid black',
         padding: '30px',
@@ -61,12 +41,22 @@ function DuplicatePage() {
         textAlign: 'center',
         marginTop: '60px',
       }}>
-        <input type="file" onChange={handleFileChange} style={{ marginBottom: '10px' }} />
-        <button onClick={handleUpload}>Upload & Check</button>
+        {/* <input type="file" onChange={handleFileChange} style={{ marginBottom: '10px' }} /> */}
+        
+        <div>
+          <input
+            type="text"
+            placeholder="Enter specific hash"
+            value={enteredHash}
+            onChange={(e) => setEnteredHash(e.target.value)}
+            style={{ marginTop: '20px' }}
+          />
+          <button onClick={handleHashCheck}>Check Hash</button>
+        </div>
+        {result && <p>{result}</p>}
       </div>
     </div>
   );
-  
 }
 
 export default DuplicatePage;

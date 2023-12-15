@@ -9,7 +9,7 @@ function Sidebar() {
   };
 
   return (
-    <div className="sidebar" style={{ float: 'left', width: '20%', backgroundColor: 'grey' }}>
+    <div className="sidebar" style={{  width: '20%', backgroundColor: 'white"' }}>
       <div style={{ textAlign: 'center', marginTop: '0px' }}>
         <img
           src="cyberguard1.jpg"
@@ -19,19 +19,22 @@ function Sidebar() {
         />
       </div>
       <ul>
-      <button onClick={handleSoftwareTestingClick} style={{ marginBottom: '2em' }}>Software Entry</button>
+      <button onClick={handleSoftwareTestingClick} style={{ marginBottom: '2em',  }}>Software Entry</button>
         
         <Link to="/technician/duplicate">
           <button style={{ marginBottom: '2em' }}>Check Duplicates</button>
         </Link>
 
-        <Link to="/tested-software">
-          <button style={{ marginBottom: '2em' }}>Tested Software</button>
-        </Link>
+        
 
         <Link to="/technician/duplicate">
           <button style={{ marginBottom: '2em' }}>Book Appointment</button>
         </Link>
+{/*
+        <Link to="/tested-software">
+          <button style={{ marginBottom: '2em' }}>Tested Software</button>
+        </Link>
+  */}
         
       </ul>
     </div>
