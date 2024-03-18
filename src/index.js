@@ -1,19 +1,15 @@
-// index.js
 import React from 'react';
 import ReactDOM from 'react-dom';
 import App from './App';
-import { DataPageContextProvider } from './context/DataPageContext'; // Import the context provider
-import FileHasher from './FileHasher';
-import FileHasher2 from './FileHasher2';
+import { DataPageContextProvider } from './context/DataPageContext';
+import { NotificationProvider } from './context/NotificationContext'; // Corrected import path
 
 ReactDOM.render(
   <React.StrictMode>
-    <DataPageContextProvider>
+    <NotificationProvider>
       <App />
-      
-      {/*<FileHasher2/>*/}
-    </DataPageContextProvider>
+    </NotificationProvider>
+    {/*<FileHasher2/>*/}
   </React.StrictMode>,
   document.getElementById('root')
 );
-

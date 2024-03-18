@@ -1,0 +1,15 @@
+.generate-hash-container {
+    display: flex;
+  }
+  
+  .sidebar {
+    width: 20%;
+    background-color: #333435;
+    padding: 10px;
+    height: 100vh;
+  }
+  
+  .upload-section {
+    flex: 1;
+  }
+  

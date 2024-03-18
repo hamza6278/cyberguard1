@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import './Login.css';
 import { useNavigate } from 'react-router-dom';
-
+import { Link } from 'react-router-dom';
+import axios from 'axios'; // Import axios for making HTTP requests
 
 function Login() {
   const [full_name, setFullName] = useState('');
@@ -9,28 +10,29 @@ function Login() {
   const [role, setRole] = useState('technician');
   const navigate = useNavigate();
 
-  const onLogin = () => {
-    console.log({ full_name, password });
-    fetch('http://localhost:3004/login', { // Change the port to 3003
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ full_name, password }),
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        if (data.success) {
-          console.log('Login successful');
-          navigate(`/${role}`);
-        } else {
-          console.log('Login failed');
-          alert('Invalid credentials. Please try again.');
-        }
-      })
-      .catch((error) => {
-        console.error('Error:', error);
+  const onLogin = async () => {
+    try {
+      const response = await axios.post('http://localhost:3028/login', {
+        full_name,
+        password,
       });
+
+      if (response.data.success) {
+        // Assuming the response includes a token; adjust based on your API response
+        localStorage.setItem('userToken', response.data.token); // Store the token
+        localStorage.setItem('full_name', full_name); // Store full name
+        localStorage.setItem('role', role); // Store role if needed for navigation or access control
+        localStorage.setItem('isAuthenticated', 'true'); // Indicate that the user is authenticated
+        
+        navigate(`/${role}`); // Navigate based on the role
+      } else {
+        console.log('Login failed');
+        alert('Invalid credentials. Please try again.');
+      }
+    } catch (error) {
+      console.error('Error during login:', error);
+      alert('An error occurred. Please try again later.');
+    }
   };
 
   return (
@@ -40,15 +42,16 @@ function Login() {
         <label>
           Role:
           <select value={role} onChange={(e) => setRole(e.target.value)}>
-            <option value="technician">Technician</option>
+            <option value="technician">Technician</option> 
             <option value="supervisor">Supervisor</option>
             <option value="analyzer">Analyzer</option>
+            <option value="admin">Admin</option>
           </select>
         </label>
       </div>
       <div>
         <label>
-          Full Name:
+          User Name:
           <input type="text" value={full_name} onChange={(e) => setFullName(e.target.value)} />
         </label>
       </div>
@@ -60,6 +63,9 @@ function Login() {
       </div>
       <div>
         <button onClick={onLogin}>Login</button>
+        <p>
+          Don't have an account? <Link to="/register">Register now</Link>
+        </p>
       </div>
     </div>
   );

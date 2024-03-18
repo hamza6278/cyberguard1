@@ -89,6 +89,19 @@ function FolderSelector() {
     });
   };
 
+  const saveToDatabase = async () => {
+    try {
+      const response = await axios.post('http://localhost:3007/saveDataToDB', {
+        fileData: fileData, // Pass your file data here
+      });
+      console.log('Data saved to database:', response.data);
+      // You might reset the fileData state or perform other actions upon successful save
+    } catch (error) {
+      console.error('Error saving data to database:', error);
+    }
+  };
+  
+
   return (
     <div>
       <div style={{ border: '1px solid black', padding: '20px', textAlign: 'center' }}>
@@ -139,6 +152,7 @@ function FolderSelector() {
           ))}
         </tbody>
       </table>
+      <button onClick={saveToDatabase}>Save to DB</button>
     </div>
   );
 }

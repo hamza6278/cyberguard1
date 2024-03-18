@@ -7,7 +7,7 @@ import FileHasher from '../../../FileHasher';
 function Page1() {
   return (
     <div>
-      <h1>Page 1: Hash Generation</h1>
+      <h1>Hash Generation</h1>
      
      <FileHasher/>
      
